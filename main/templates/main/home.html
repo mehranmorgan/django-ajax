@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+    <title>Home</title>
+</head>
+<body>
+    <div class="container">
+
+        <ul class="ul-container first-ul">
+            <span>First Get Method:</span>
+        </ul>
+
+        <ul class="ul-container second-ul " >
+            <span>Second Get Method:</span>
+
+        </ul>
+        <button class="btn-success">Get Data</button>
+    </div>
+<script>
+    let ulContainerFirst = document.querySelector('.first-ul');
+    let ulContainerSecond = document.querySelector('.second-ul');
+    let btn = document.querySelector('.btn-success');
+
+    function getData() {
+        ulContainerFirst.innerHTML='<span>First Get Method:</span>'
+        $.get('product/')
+            .then(res => {
+                res.forEach(product => {
+
+                    let txt=`<li class='li'>${product.name}</li>`;
+                    ulContainerFirst.insertAdjacentHTML('beforeend', txt);
+                })
+            })
+            .catch(err => console.log(err));
+    }
+
+    function getData2() {
+        ulContainerSecond.innerHTML=`<span>Second Get Method:</span>`
+        $.ajax({
+            url: 'product/',
+            method: 'get',
+
+        })
+        .then(res => {
+                res.forEach(product => {
+                    let txt=`<li class='li'>${product.name}</li>`;
+                    ulContainerSecond.insertAdjacentHTML('beforeend', txt);
+                })
+            })
+            .catch(err => console.log(err));
+
+    }
+
+    btn.addEventListener('click', () => {
+        getData();
+        getData2()
+    })
+
+
+</script>
+</body>
+</html>
