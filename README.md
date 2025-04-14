@@ -46,21 +46,22 @@ In `views.py`, create a view to send the data as JSON:
 ```python
 from django.http import JsonResponse
 from .models import Product
+from .serializer import ProductSerializer
 
 def product_list(request):
     products = Product.objects.all()
-    data = [{"name": product.name} for product in products]
-    return JsonResponse(data, safe=False)
+    ser=ProductSerializer(products,many=True)
+    return JsonResponse(ser.data)
 ```
 
 In `urls.py`, add the path for this view:
 
 ```python
 from django.urls import path
-from .views import product_list
+from . import views
 
 urlpatterns = [
-    path('product/', product_list, name='product-list'),
+    path('product/', views.product_list, name='product-list'),
 ]
 ```
 
@@ -90,13 +91,19 @@ project/
 ├── product/
 │   ├── migrations/
 │   ├── models.py
+│   ├── serializer.py
+│   ├── views.py
+│   └── urls.py
+├── product/
+│   ├── migrations/
+|   ├──templates/main
+|                └── home.html
+│   ├── models.py
 │   ├── views.py
 │   └── urls.py
 │
 ├── static/
 │   └── home.css
-├── templates/
-│   └── home.html
 └── manage.py
 ```
 
