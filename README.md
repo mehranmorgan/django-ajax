@@ -1,106 +1,109 @@
 
-# django-ajax
+# Home Page Data Fetching
 
-`django-ajax` is a simple and efficient library for using Ajax in Django projects. This library allows you to easily manage Ajax requests in your Django projects without complex coding.
+This project is a simple HTML page that uses two different methods to fetch data from the server. The data is displayed as `<ul>` lists on the page. The project uses Django for the backend and jQuery for client-side interactions.
 
 ## Features
 
-- **Simple and User-friendly:** Using Ajax in Django projects without complexity
-- **Easy Request Management:** Sending and receiving data from the server without reloading the page
-- **Supports Multiple Data Formats:** JSON and other data formats supported
-- **Flexible:** Can be used in any type of Django project
-- **CSRF Support:** Ensures request security using CSRF Token
+- GET method used to fetch data
+- Two different methods for sending GET requests:
+  - Using `$.get()`
+  - Using `$.ajax()`
+- Data is displayed in two separate lists named "First Get Method" and "Second Get Method"
+- A button to send the requests and fetch data
 
 ## Prerequisites
 
-To use `django-ajax`, you need the following:
+1. **Django** for the backend
+2. **jQuery** for sending AJAX requests
+3. The static file `home.css` for styling the page
 
-- Python 3.6 or higher
-- Django 3.0 or higher
+## Installation and Setup
 
-## Installation
+### 1. Install prerequisites
 
-To install this library, use the following command:
+Make sure Django and jQuery are installed.
 
-```bash
-pip install django-ajax
-```
+- To install Django:
+  ```bash
+  pip install django
+  ```
 
-## Setup and Usage
+- To include jQuery in your project, add the following code to the `<head>` of your HTML file:
+  ```html
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+  ```
 
-### 1. Initial Setup
+### 2. Set up the Django project
 
-After installation, add the library to `INSTALLED_APPS` in your Django project's `settings.py` file:
+Create a new Django project and a `product` app.
+The `product/` path in the code above refers to a view in Django that fetches the product data from the database. You need to create a `Product` model in the `models.py` file and return the data as JSON via a view.
+
+### 3. Create a View in Django
+
+In `views.py`, create a view to send the data as JSON:
 
 ```python
-INSTALLED_APPS = [
-    ...
-    'django_ajax',
-    ...
+from django.http import JsonResponse
+from .models import Product
+
+def product_list(request):
+    products = Product.objects.all()
+    data = [{"name": product.name} for product in products]
+    return JsonResponse(data, safe=False)
+```
+
+In `urls.py`, add the path for this view:
+
+```python
+from django.urls import path
+from .views import product_list
+
+urlpatterns = [
+    path('product/', product_list, name='product-list'),
 ]
 ```
 
-### 2. Using Ajax in Views
+### 4. Styling the Page
 
-In your `views.py` file, you can use Ajax to send data and receive responses:
+The `home.css` file should be placed in the static folder of the project, and it should contain the necessary styles for the HTML page.
 
-```python
-from django_ajax.decorators import ajax
+## Usage
 
-@ajax
-def my_ajax_view(request):
-    # Process the data
-    data = {'message': 'Ajax request was successful!'}
-    return data
+1. Load the HTML page in your browser.
+2. Click on the "Get Data" button to fetch data using two different methods, and display it in the lists.
+3. GET requests are sent to the server, and products from the database are displayed as a list on the page.
+
+## Example
+
+### Method 1 (using `$.get()`):
+Data is displayed in a list of products under "First Get Method".
+
+### Method 2 (using `$.ajax()`):
+Data is displayed in another list under "Second Get Method".
+
+## Project Structure
+
+```
+project/
+│
+├── product/
+│   ├── migrations/
+│   ├── models.py
+│   ├── views.py
+│   └── urls.py
+│
+├── static/
+│   └── home.css
+├── templates/
+│   └── home.html
+└── manage.py
 ```
 
-### 3. Sending Ajax Request from the Client Side
+## Acknowledgments
 
-In your HTML file, you can use jQuery to send an Ajax request to the server:
+This project was created for educational purposes. Please credit the original author if you use this code in commercial or public projects.
 
-```html
-<button id="ajaxButton">Send Request</button>
+## Help and Support
 
-<script>
-    $(document).ready(function() {
-        $('#ajaxButton').click(function() {
-            $.ajax({
-                url: '{% url "my_ajax_view" %}',
-                type: 'GET',
-                success: function(response) {
-                    alert(response.message);
-                },
-                error: function() {
-                    alert('Error sending Ajax request!');
-                }
-            });
-        });
-    });
-</script>
-```
-
-## Security and CSRF
-
-The `django-ajax` library uses CSRF Token by default to ensure the security of Ajax requests. To ensure the CSRF Token is sent correctly in the requests, you can set it up in your Django templates:
-
-```html
-<script type="text/javascript">
-    const csrfToken = '{{ csrf_token }}';
-</script>
-```
-
-## Documentation and Resources
-
-For full documentation and additional guidance, please refer to the [official Django website](https://www.djangoproject.com/) and [Ajax documentation in Django](https://docs.djangoproject.com/en/stable/ref/request-response/#ajax).
-
-## Contributing
-
-Contributions to open-source projects are always welcome! If you have an idea to improve this library or encounter any issues, please open a new issue or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. For more details, please check the [LICENSE](LICENSE) file.
-
----
-
-**Developer:** [Mehran Morgan](https://github.com/mehranmorgan)
+If you encounter any issues or have questions, please feel free to open an issue in the project repository.
